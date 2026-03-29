@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Ayesha</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ff758c, #7a5cff);
+    color: white;
+}
+
+/* GLASS CARD */
+.card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    animation: fadeIn 1s ease;
+}
+
+/* CENTER */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+/* BUTTON */
+button {
+    margin-top: 20px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 30px;
+    background: white;
+    color: #7a5cff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* PAGES */
+.page {
+    display: none;
+}
+
+.active {
+    display: block;
+}
+
+/* GIFT */
+#gift {
+    font-size: 80px;
+    cursor: pointer;
+    animation: float 2s infinite;
+}
+
+@keyframes float {
+    0%,100% {transform: translateY(0);}
+    50% {transform: translateY(-15px);}
+}
+
+/* MESSAGE */
+#message {
+    margin-top: 20px;
+    line-height: 1.6;
+    min-height: 150px;
+    white-space: pre-line;
+}
+
+/* FADE */
+.fade {
+    animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+/* CONFETTI CANVAS */
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* BALLOONS */
+.balloon {
+    position: absolute;
+    bottom: -120px;
+    width: 50px;
+    height: 60px;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: rise linear infinite;
+}
+
+@keyframes rise {
+    to {
+        transform: translateY(-120vh);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="container">
+
+    <!-- PAGE 1 -->
+    <div class="card page active" id="page1">
+        <h1>Happy Birthday, Ayesha 🎉</h1>
+        <p style="margin-top:10px;">I made something special for you 💖</p>
+        <button onclick="nextPage()">Open</button>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="card page" id="page2">
+        <div id="gift" onclick="openGift()">🎁</div>
+        <p>Tap to open your surprise</p>
+    </div>
+
+    <!-- PAGE 3 -->
+    <div class="card page" id="page3">
+        <h2>💖 Ayesha 💖</h2>
+        <div id="message"></div>
+    </div>
+
+</div>
+
+<script>
+
+/* NAVIGATION */
+function nextPage() {
+    switchPage("page1", "page2");
+}
+
+function openGift() {
+    switchPage("page2", "page3");
+    createBalloons();
+    startTyping();
+}
+
+function switchPage(hide, show) {
+    document.getElementById(hide).classList.remove("active");
+    let next = document.getElementById(show);
+    next.classList.add("active");
+    next.classList.add("fade");
+}
+
+/* TYPING EFFECT */
+const text = `Happy Birthday, Ayesha 💕
+
+You are not just my cousin — you are my best friend, my sister, and one of the most important people in my life.
+
+You have a way of making everything feel lighter, happier, and more meaningful just by being there.
+
+I honestly don’t know what I would do without you, and I feel incredibly lucky to have you in my life.
+
+I hope this year brings you happiness, success, peace, and everything your heart has been wishing for.
+
+And no matter what happens, I will always be here for you — always. 💖`;
+
+let index = 0;
+
+function startTyping() {
+    const speed = 35;
+    function type() {
+        if (index < text.length) {
+            document.getElementById("message").innerHTML += text.charAt(index);
+            index++;
+            setTimeout(type, speed);
+        }
+    }
+    type();
+}
+
+/* BALLOONS */
+function createBalloons() {
+    const colors = ["#ff6b81", "#ff9ff3", "#feca57", "#48dbfb"];
+
+    for (let i = 0; i < 25; i++) {
+        let b = document.createElement("div");
+        b.className = "balloon";
+        b.style.left = Math.random() * 100 + "vw";
+        b.style.background = colors[Math.floor(Math.random() * colors.length)];
+        b.style.animationDuration = (6 + Math.random() * 5) + "s";
+        document.body.appendChild(b);
+    }
+}
+
+/* FIXED CONFETTI (FULL SCREEN) */
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+let confetti = Array.from({length: 200}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 4 + 1,
+    dx: Math.random() - 0.5,
+    dy: Math.random() + 1
+}));
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    confetti.forEach(c => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        ctx.fillStyle = "white";
+        ctx.fill();
+
+        c.x += c.dx;
+        c.y += c.dy;
+
+        if (c.y > canvas.height) {
+            c.y = 0;
+            c.x = Math.random() * canvas.width;
+        }
+    });
+
+    requestAnimationFrame(draw);
+}
+
+draw();
+
+</script>
+
+</body>
+</html>
